@@ -65,6 +65,13 @@ export const isUsernameTaken = async (username: string): Promise<boolean> => {
   return !querySnapshot.empty;
 };
 
+export const isWhatsappTaken = async (whatsapp: string): Promise<boolean> => {
+  const usersRef = collection(db, "users");
+  const q = query(usersRef, where("whatsapp", "==", whatsapp));
+  const querySnapshot = await getDocs(q);
+
+  return !querySnapshot.empty;
+};
 
 export const cleanData = (obj: Record<string, any>) => {
   return Object.fromEntries(

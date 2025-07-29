@@ -449,7 +449,7 @@ const page = () => {
 
   return (
     <div className='pb-20 md:pt-28'>
-        <div className="flex gap-2 items-center w-full p-2.5 rounded-full bg-gray-100 mb-4">
+        <div className="md:hidden flex gap-2 items-center w-full p-2.5 rounded-full bg-gray-100 mb-4">
             <Search size={18}/>
             <input type="text" className='w-full placeholder:text-sm text-sm text-gray-500' placeholder='Search Tasks'/>
         </div>

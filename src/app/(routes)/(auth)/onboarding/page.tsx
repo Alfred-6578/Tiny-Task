@@ -17,6 +17,7 @@ interface FormDataProps{
     username: string,
     interests: string[],
     intent: string,
+    whatsapp: string,
 }
 
 export interface StepProps{
@@ -37,6 +38,7 @@ const page = () => {
         username: '',
         interests: [],
         intent: '',
+        whatsapp: '',
     });
     const [currentStep, setCurrentStep] = useState<number>(0)
     const [usernameValid, setUsernameValid] = useState(true);
@@ -69,6 +71,7 @@ const page = () => {
     const handleFinishOnboarding = (data:any) =>{
         const hasData =
         data.username.trim() !== '' ||
+        data.whatsapp.trim() !== '' ||
         data.intent.trim() !== '' ||
         data.interests.length > 0
 
