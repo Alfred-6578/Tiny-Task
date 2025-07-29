@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+*{
+  outline: none
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --breakpoint-xtny: 350px;
+  --breakpoint-tny: 450px;
+  --breakpoint-vsm: 550px;
+  --breakpoint-ml: 850px;
+
+  --color-primary: #0077FF;       /* Electric Blue */
+  --color-secondary: #FF6B00;     /* Vibrant Orange */
+
+  /* Grayscale / Backgrounds */
+  --color-bg-light: #F9FAFB;      /* Light Background */
+  --color-bg-dark: #1F2937;       /* Dark Background */
+  --color-card: #FFFFFF;          /* Card Background */
+
+  /* Feedback Colors */
+  --color-success: #10B981;       /* Emerald Green */
+  --color-error: #EF4444;         /* Soft Red */
+
+  /* Input Styling */
+  --color-border-focus: #3B82F6;  /* Neon Blue */
+  --color-placeholder: #9CA3AF;   /* Placeholder Text */
+
+  /* Text Colors */
+  --color-text-main: #111827;     /* Charcoal Gray */
+  --color-text-light: #6B7280;    /* Secondary Text */
+
+  /* Fonts */
+  --font-heading: 'Poppins', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-label: 'Space Grotesk', sans-serif;
+  --font-micro: 'Roboto', sans-serif;
+        
+  /* --animate-bounce-dot: 'bounce-dot 0.6s infinite ease-in-out', */
+}
+
+@media (prefers-color-scheme: dark) {
+  /* :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  } */
+}
+
+body {
+  /* background: var(--color-bg-light); */
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  outline: none;
+}
+
+.gradient::before{
+  content: "";
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle at top right, #0077FF30, transparent 70%);
+  top: 0px;
+  right: 0px;
+  z-index: -1;
+}
+
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
+
+.full-h{
+  height: -webkit-fill-available;
+}
+
+.truncate-2-lines {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.truncate-1-line {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.scrollbar-hide {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE 10+ */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+
+.bounce-dot {
+  animation: bounceUpDown 0.9s infinite ease-in-out;
+}
+
+@keyframes bounceUpDown {
+  0%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-12px);
+  }
+}
+
