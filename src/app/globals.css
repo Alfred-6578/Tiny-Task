@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import 'react-datepicker/dist/react-datepicker.css';
+
 
 :root {
   --background: #ffffff;
@@ -6,7 +8,8 @@
 }
 
 *{
-  outline: none
+  outline: none;
+  list-style: none;
 }
 
 @theme inline {
@@ -80,6 +83,11 @@ input::-ms-clear {
 
 .full-h{
   height: -webkit-fill-available;
+}
+
+.react-datepicker-wrapper,
+.react-datepicker__input-container {
+  width: 100%;
 }
 
 .truncate-2-lines {

@@ -1,7 +1,10 @@
 import { formatDistanceToNow, formatDistanceToNowStrict } from 'date-fns';
 import { MoreVertical, Heart, Users, Calendar, MapPin, Tag } from 'lucide-react';
+import {BsHeart, BsHeartFill } from 'react-icons/bs';
 import Link from 'next/link';
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
+import { doc, setDoc, increment, updateDoc, deleteDoc, getDoc } from "firebase/firestore";
+import { db } from '@/lib/firebase';
 
 
 export type TaskCardProps = {
@@ -19,15 +22,17 @@ export type TaskCardProps = {
     isUrgent: boolean;
     price: number;
     status: "open" | "in_progress" | "completed" | "cancelled" | string;
-    taskDeadline: string; // ISO string
+    taskDeadline: string;
     applicationDeadline: string;
     location: string;
+    city: string;
+    state: string;
     isRemote: boolean;
     createdAt: string;
     updatedAt: string;
-    likes: number,
+    likesCount: number,
     selectedTasker: string | null;
-    applications: any[]; // you can make this more specific later
+    applicationCount: number;
     taskCompletion: {
       confirmedByPoster: boolean;
       confirmedByTasker: boolean;
@@ -43,10 +48,11 @@ export type TaskCardProps = {
     tierRequirement: number | null;
   };
   onClick?: () => void;
+  userId : string;
 };
 
 
-export const TaskCard: FC<TaskCardProps> = ({ task }) => {
+export const TaskCard: FC<TaskCardProps> = ({ task, userId }) => {
   const {
     id,
     title,
@@ -55,24 +61,83 @@ export const TaskCard: FC<TaskCardProps> = ({ task }) => {
     postedBy,
     skillTags,
     location,
+    city,
+    state,
     tierRequirement,
-    applications,
-    likes,
-    isUrgent
-  } = task;
+    applicationCount,
+    likesCount,
+    isUrgent,
+    isRemote
 
-  const deadline = formatDistanceToNowStrict(new Date(task.taskDeadline), {
+  } = task;
+  
+  const [liked, setLiked] = useState(false)
+  const [likeCount, setLikeCount] = useState(likesCount?? 0)
+
+  
+  const toggleLike = async ()=>{
+    if (liked) {
+      setLiked(false)
+      setLikeCount((prev)=> prev - 1 )
+    }else{
+      setLiked(true)
+      setLikeCount((prev)=> prev + 1 )
+    }
+
+
+    try {
+      const likeRef = doc(db, "tasks", task.id, "likes", userId);
+      const taskRef = doc(db, "tasks", task.id);
+
+      if (!liked) {
+        await setDoc(likeRef, {
+          createdAt: new Date()
+        });
+
+        await updateDoc(taskRef, {
+          likesCount: increment(1)
+        });
+      }else{
+        await deleteDoc(likeRef);
+        await updateDoc(taskRef, {
+          likesCount: increment(-1)
+        });
+      }
+      
+    } catch (error) {
+      console.error("Failed to like task")
+
+      setLiked((prev) => !prev);
+      setLikeCount((prev) => (liked ? prev + 1 : prev - 1));
+    }
+  }
+
+
+
+  const deadline = formatDistanceToNowStrict(new Date(task?.taskDeadline), {
       addSuffix: true,
   });
-  const postedAgo = formatDistanceToNow(new Date(task.createdAt), { addSuffix: true });
+  const postedAgo = formatDistanceToNowStrict(new Date(task?.createdAt), { addSuffix: true });
 
+
+  useEffect(() => {
+    if (!userId || !task?.id) return;
+   
+    const likeRef = doc(db, "tasks", task.id, "likes", userId);
+      
+    getDoc(likeRef).then((snap) => {
+      setLiked(snap.exists());
+    });
+  }, [task?.id, userId]);
+
+ 
   return (
-    <div className="bg-white border flex flex-col justify-between border-gray-200 shadow-sm rounded-2xl p-4 w-full max-w-[calc(100vw-48px)] mx-auto transition-transform duration-300 hover:scale-[1.02]">
+    <div className="bg-white border flex flex-col justify-between border-gray-200 shadow-sm rounded-2xl p-4 w-full max-w-[calc(100vw-48px)] mx-auto transition-transform duration-300">
       <div className="">
         <div className="flex items-center justify-between text-sm text-gray-500">
           <div className="flex items-center gap-1">
-            <Link href={`/users/${postedBy.userId}`} className="font-semibold text-black hover:underline">@{postedBy.displayName}</Link >
-            <span className="text-xs bg-gray-100 px-2 py-0.5 rounded-full text-gray-600">Tier {postedBy.tier}</span>
+            <Link href={`/users/${postedBy.userId}`} className="font-semibold text-black hover:underline capitalize">@{postedBy.displayName}</Link >
+            {/* <span className="text-xs bg-gray-100 px-2 py-0.5 rounded-full text-gray-600">Tier {tierRequirement}</span> */}
             <span className="mx-1">•</span>
             <span>{postedAgo}</span>
           </div>
@@ -81,7 +146,11 @@ export const TaskCard: FC<TaskCardProps> = ({ task }) => {
 
         <div className="mt-1 text-sm text-gray-600 flex items-center gap-1">
           <MapPin className="w-4 h-4 text-gray-400" />
-          <span>{location}</span>
+          {
+            isRemote? "Remote"
+            :<span>{city},{state}</span>
+
+          }
         </div>
 
         <h2 className="mt-3 text-base font-semibold text-gray-900 truncate-1-line">
@@ -120,19 +189,26 @@ export const TaskCard: FC<TaskCardProps> = ({ task }) => {
 
         <div className="flex items-center justify-between mt-4 text-sm text-gray-500">
           <div className="flex items-center gap-1">
-            <Heart className="w-4 h-4 text-red-500" />
-            <span>{likes} Likes</span>
+            <span onClick={toggleLike} className='cursor-pointer'>
+              {
+                !liked ?
+                <Heart className="w-4 h-4 text-red-500" />
+                :
+                <BsHeartFill className="w-4 h-4 text-red-500"/>
+              }
+            </span>
+            <span>{likeCount} Likes</span>
           </div>
           <div className="flex items-center gap-1">
             <Users className="w-4 h-4" />
-            <span>{applications.length} {applications.length !== 1 ? 'Applicants' : 'Applicant' }</span>
+            <span>{applicationCount } { applicationCount !== 1 ? 'Applicants' : 'Applicant' }</span>
           </div>
         </div>
 
         <div className="mt-4 flex w-full">
           <Link href={`/tasks/${id}`} className='w-full'>
             <button className="w-full bg-primary cursor-pointer text-white text-sm py-2 rounded-full hover:bg-gray-800 transition">
-              Apply Now
+              Apply For Task
             </button>
           </Link>
         </div>
