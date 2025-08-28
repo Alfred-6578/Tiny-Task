@@ -2,7 +2,7 @@
 import MainNav from "@/app/components/ui/MainNav";
 
 
-export default function RootLayout({
+export default function HomeLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;

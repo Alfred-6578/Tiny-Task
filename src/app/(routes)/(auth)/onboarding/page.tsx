@@ -43,7 +43,7 @@ const page = () => {
     const [currentStep, setCurrentStep] = useState<number>(0)
     const [usernameValid, setUsernameValid] = useState(true);
     const [usernameTaken, setUsernameTaken] = useState<boolean|null>(null);  
-    const [userId, setUserId] = useState<string>('');
+    const [userId, setUserId] = useState<string|null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [pageLoading, setPageLoading] = useState<boolean>(true)
 
@@ -51,6 +51,8 @@ const page = () => {
     const router = useRouter()
  
     const finishOnboarding = async (data:any) => {
+        if(!userId) return;
+
         try {
             setIsLoading(true)
             const cleaned = cleanData(data);

@@ -22,13 +22,13 @@ const MainNav = () => {
            <input placeholder='Search Task' type="text" className='w-full'/>
         </div>
         <div className="flex gap-6 text-placeholder items-center">
-            <Link href={'/'} >
+            <Link href={'/create-task'} >
                 <Plus/>
             </Link>
-            <Link href={'/'} >
+            <Link href={'/notifications'} >
                 <Bell/>
             </Link>
-            <Link href={'/'} className='flex w-9 h-9 p-1 text-placeholder bg-bg-light items-center justify-center border rounded-full'>
+            <Link href={'/profile'} className='flex w-9 h-9 p-1 text-placeholder bg-bg-light items-center justify-center border rounded-full'>
                 <User/>
             </Link>
         </div>
@@ -37,7 +37,7 @@ const MainNav = () => {
       <nav className="md:hidden text-placeholder text-2xl fixed flex items-center justify-between w-full bg-white shadow -bottom-0.5 z-80 p-5.5 tny:p-6.5 tny:px-8.5">
         <NavLink icon={<GoHome/>} text="Home" path='/' currentPath={pathName}/>
         <NavLink icon={<BiSearchAlt/>} text="Search" path='/search' currentPath={pathName}/>
-        <NavLink icon={<Plus/>} text="Post" path='/post-task' currentPath={pathName}/>
+        <NavLink icon={<Plus/>} text="Post" path='/create-task' currentPath={pathName}/>
         <NavLink icon={<GoBell/>} text="Notification" path='/notification' currentPath={pathName}/>
         <NavLink icon={<LuUser/>} text="Profile" path='/profile' currentPath={pathName}/>
       
